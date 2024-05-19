@@ -6,7 +6,13 @@ Ini deskripsi tugas
 
 ## Cara Kompilasi
 
-1. Tekan F5
+1. Inisialisasi database
+
+    ```bash
+    python db/seeder.py
+    ```
+
+2. Tekan F5
 
 ## Anggota
 
