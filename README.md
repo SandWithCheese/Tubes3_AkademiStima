@@ -9,7 +9,7 @@ Ini deskripsi tugas
 1. Inisialisasi database
 
     ```bash
-    python db/seeder.py
+    python src/Database/seeder.py
     ```
 
 2. Tekan F5
