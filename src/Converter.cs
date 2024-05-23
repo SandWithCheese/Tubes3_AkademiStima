@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Text;
 
@@ -6,11 +5,14 @@ namespace src;
 public class Converter
 {
     // public static void Main()
-    //{
-    //    string imagePath = @"C:\Users\Lenovo\Pictures\Screenshots\tes.png";
-    //    String ascii = ConvertImgToAscii(imagePath);
-    //    Console.WriteLine(ascii);
-    //}
+    // {
+    //     String imagePath = "C:/Users/Lenovo/Downloads/archive/SOCOFing/SOCOFing/Real/9__M_Left_little_finger.BMP";
+    //     String imagePath2 = "C:/Users/Lenovo/Downloads/archive/SOCOFing/SOCOFing/Real/95__M_Left_little_finger.BMP";
+    //     String ascii = ConvertImgToAscii(imagePath);
+    //     String ascii2 = ConvertImgToAscii(imagePath2);
+        
+    //    Console.WriteLine(KMP.CalculateSimilarity(ascii, ascii2));
+    // }
     public static Bitmap ConvertToGrayscale(Bitmap image)
     {
         Bitmap grayImg = new Bitmap(image.Width, image.Height);
