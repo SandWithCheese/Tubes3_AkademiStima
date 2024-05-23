@@ -3,15 +3,15 @@ using System.Drawing;
 using System.Text;
 
 namespace src;
-public class Program
+public class Converter
 {
-    //static void Main()
+    // public static void Main()
     //{
     //    string imagePath = @"C:\Users\Lenovo\Pictures\Screenshots\tes.png";
     //    String ascii = ConvertImgToAscii(imagePath);
     //    Console.WriteLine(ascii);
     //}
-    static Bitmap ConvertToGrayscale(Bitmap image)
+    public static Bitmap ConvertToGrayscale(Bitmap image)
     {
         Bitmap grayImg = new Bitmap(image.Width, image.Height);
         for (int i = 0; i < image.Height; i++)
@@ -26,7 +26,7 @@ public class Program
         }
         return grayImg;
     }
-    static String ConvertToBinaryString(Bitmap grayImg)
+    public static String ConvertToBinaryString(Bitmap grayImg)
     {
         StringBuilder binaryString = new StringBuilder();
 
@@ -42,7 +42,7 @@ public class Program
         return binaryString.ToString();
     }
 
-    static String BinaryToAscii(String binaryString)
+    public static String BinaryToAscii(String binaryString)
     {
         StringBuilder asciiString = new StringBuilder();
         for (int i = 0; i < binaryString.Length; i += 8)
@@ -58,7 +58,7 @@ public class Program
         // Convert the StringBuilder to a string for return
         return asciiString.ToString();
     }
-    static String ConvertImgToAscii(String imagePath)
+    public static String ConvertImgToAscii(String imagePath)
     {
         // Open image
         Bitmap img = new Bitmap(imagePath);
