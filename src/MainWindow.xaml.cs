@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using src.Encryption;
 using src.MVVM.Model;
 
 namespace src;
@@ -34,16 +35,15 @@ public partial class MainWindow : Window
         _sidikJariRepository = new SidikJariRepository("Database/database.db");
         SidikJari = new ObservableCollection<SidikJari>(_sidikJariRepository.GetAll());
 
+        DotNetEnv.Env.Load(".env");
+        byte[] key = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
+        byte[] iv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
+
         foreach (var biodata in Biodata)
         {
             Console.WriteLine(biodata.Nik);
             Console.WriteLine(biodata.Nama);
+            Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
         }
-
-        // foreach (var sidikJari in SidikJari)
-        // {
-        //     Console.WriteLine(sidikJari.BerkasCitra);
-        //     Console.WriteLine(sidikJari.Nama);
-        // }
     }
 }
