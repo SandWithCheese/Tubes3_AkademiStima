@@ -9,10 +9,28 @@ Ini deskripsi tugas
 1. Inisialisasi database
 
     ```bash
-    python src/Database/seeder.py
+    cd seeder
+    dotnet restore
+    dotnet build
+    dotnet run
     ```
 
-2. Tekan F5
+    Akan di-generate file `database.db` yang berisi database sqlite yang telah diisi dengan data faker yang dienkripsi beserta file `.env` yang berisi key dan iv dari enkripsi yang dilakukan. Pindahkan file `database.db` ke dalam folder src/Database dan file `.env` ke folder src.
+
+2. Inisialisasi aplikasi
+
+    ```bash
+    cd src
+    dotnet restore
+    dotnet build
+    dotnet run
+    ```
+
+    Command-command tersebut akan menginisialisasi packages yang digunakan pada aplikasi beserta melakukan proses build aplikasi dan menjalankannya.
+
+3. Inisialisasi dataset
+
+    Instruksi untuk dataset dapat dilihat lebih lanjut pada file README di folder test.
 
 ## Anggota
 
