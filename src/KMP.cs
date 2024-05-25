@@ -2,7 +2,7 @@ namespace src;
 
 class KMP
 {
-    private static int[] findArrayKMP(string pattern)
+    private static int[] FindArrayKMP(string pattern)
     {
         int length = 0;
         int i = 1;
@@ -39,7 +39,7 @@ class KMP
     // Find the longest match
     private static int KMPSearchLongestMatch(string text, string pattern)
     {
-        int[] lps = findArrayKMP(pattern);
+        int[] lps = FindArrayKMP(pattern);
         int i = 0; // index for text[]
         int j = 0; // index for pattern[]
         int maxLength = 0; // length of the longest match
