@@ -1,49 +1,144 @@
-﻿using System.Collections.ObjectModel;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using Microsoft.Win32;
 using src.Encryption;
 using src.MVVM.Model;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls;
 
-namespace src;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace src
 {
-    public ObservableCollection<Biodata> Biodata { get; set; }
-    public ObservableCollection<SidikJari> SidikJari { get; set; }
-    private readonly BiodataRepository _biodataRepository;
-    private readonly SidikJariRepository _sidikJariRepository;
-
-    public MainWindow()
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        DataContext = this;
+        public ObservableCollection<Biodata> Biodata { get; set; }
+        public ObservableCollection<SidikJari> SidikJari { get; set; }
+        private readonly BiodataRepository _biodataRepository;
+        private readonly SidikJariRepository _sidikJariRepository;
 
-        _biodataRepository = new BiodataRepository("Database/database.db");
-        Biodata = new ObservableCollection<Biodata>(_biodataRepository.GetAll());
-
-        _sidikJariRepository = new SidikJariRepository("Database/database.db");
-        SidikJari = new ObservableCollection<SidikJari>(_sidikJariRepository.GetAll());
-
-        DotNetEnv.Env.Load(".env");
-        byte[] key = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
-        byte[] iv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
-
-        foreach (var biodata in Biodata)
+        public MainWindow()
         {
-            Console.WriteLine(biodata.Nik);
-            Console.WriteLine(biodata.Nama);
-            Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
+            InitializeComponent();
+            DataContext = this;
+
+            _biodataRepository = new BiodataRepository("Database\\database.db");
+            Biodata = new ObservableCollection<Biodata>(_biodataRepository.GetAll());
+
+            _sidikJariRepository = new SidikJariRepository("Database\\database.db");
+            SidikJari = new ObservableCollection<SidikJari>(_sidikJariRepository.GetAll());
+
+            DotNetEnv.Env.Load(".env");
+            byte[] key = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
+            byte[] iv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
+
+            foreach (var biodata in Biodata)
+            {
+                Console.WriteLine(biodata.Nik);
+                Console.WriteLine(biodata.Nama);
+                Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
+            }
+        }
+
+        private void uploadImage(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            openFileDialog.Filter = "Image Files (*.png;*.jpg;*.jpeg;*.gif;*.bmp)|*.png;*.jpg;*.jpeg;*.gif;*.bmp|All Files (*.*)|*.*";
+            openFileDialog.FilterIndex = 1;
+
+            // Call the ShowDialog method to show the dialog box.
+            bool? result = openFileDialog.ShowDialog();
+
+            // Process input if the user clicked OK.
+            if (result == true)
+            {
+                // Open the selected file to read.
+                string filePath = openFileDialog.FileName;
+                string fileName = openFileDialog.SafeFileName;
+
+                sourceImage.Source = new BitmapImage(new Uri(filePath));
+            }
+            else
+            {
+                MessageBox.Show("No file selected.");
+            }
+        }
+
+        private void algorithmChecked(object sender, RoutedEventArgs e)
+        {
+            RadioButton selectedRadioButton = sender as RadioButton;
+
+            if (selectedRadioButton != null)
+            {
+                string selectedAlgorithm = selectedRadioButton.Content.ToString();
+                // You can use 'selectedAlgorithm' here as needed
+            }
+        }
+
+        private void searchImage(object sender, RoutedEventArgs e)
+        {
+            if (sourceImage.Source == null)
+            {
+                MessageBox.Show("Please upload an image first.");
+                return;
+            }
+
+            Biodata.Clear();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            string selectedAlgorithm = "";
+
+            // If BM is checked
+            if (BM.IsChecked == true)
+            {
+                Biodata.Add(new Biodata
+                {
+                    Nik = "1234567890123456",
+                    Nama = "BM",
+                    TempatLahir = "Jakarta",
+                    TanggalLahir = DateOnly.FromDateTime(DateTime.Now),
+                    JenisKelamin = "Male",
+                    GolonganDarah = "O",
+                    Alamat = "Jl. Dummy Address",
+                    Agama = "Islam",
+                    StatusPerkawinan = "Married",
+                    Pekerjaan = "Software Engineer",
+                    Kewarganegaraan = "Indonesian"
+                });
+            }
+
+            // If KMP is checked
+            if (KMP.IsChecked == true)
+            {
+                Biodata.Add(new Biodata
+                {
+                    Nik = "1234567890123456",
+                    Nama = "KMP",
+                    TempatLahir = "Jakarta",
+                    TanggalLahir = DateOnly.FromDateTime(DateTime.Now),
+                    JenisKelamin = "Male",
+                    GolonganDarah = "O",
+                    Alamat = "Jl. Dummy Address",
+                    Agama = "Islam",
+                    StatusPerkawinan = "Married",
+                    Pekerjaan = "Software Engineer",
+                    Kewarganegaraan = "Indonesian"
+                });
+            }
+
+            stopwatch.Stop();
+
+            // Display execution time and match percentage
+            executionTimeText.Text = $"Execution Time: {stopwatch.ElapsedMilliseconds} ms";
+            matchPercentageText.Text = "Matches Percentage: 100%";  // Example match percentage
         }
     }
 }

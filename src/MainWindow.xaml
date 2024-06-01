@@ -5,8 +5,52 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:src"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Akademi Stima" Height="450" Width="900">
     <Grid>
+        <TextBlock FontSize="20" HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" Text="High-Precision Fingerprint Recognition System" VerticalAlignment="Top"/>
 
+        <!-- Suspect Images -->
+        <Image x:Name="sourceImage" HorizontalAlignment="Left" Margin="28,68,0,166" Width="250" Height="250"/>
+        <Image x:Name="resultImage" HorizontalAlignment="Left" Margin="358,68,0,166" Width="250" Height="250"/>
+
+        <ListBox ItemsSource="{Binding Biodata}" Margin="672,67,16,0" Height="250" VerticalAlignment="Top">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Vertical" Margin="5">
+                            <TextBlock Text="{Binding Nik}" FontSize="14"/>
+                            <TextBlock Text="{Binding Nama}" FontSize="14"/>
+                            <TextBlock Text="{Binding TempatLahir}" FontSize="14"/>
+                            <TextBlock Text="{Binding TanggalLahir}" FontSize="14"/>
+                            <TextBlock Text="{Binding JenisKelamin}" FontSize="14"/>
+                            <TextBlock Text="{Binding GolonganDarah}" FontSize="14"/>
+                            <TextBlock Text="{Binding Alamat}" FontSize="14"/>
+                            <TextBlock Text="{Binding Agama}" FontSize="14"/>
+                            <TextBlock Text="{Binding StatusPerkawinan}" FontSize="14"/>
+                            <TextBlock Text="{Binding Pekerjaan}" FontSize="14"/>
+                            <TextBlock Text="{Binding Kewarganegaraan}" FontSize="14"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Upload Image Button -->
+        <Button Content="Upload Image" HorizontalAlignment="Left" Margin="140,344,0,0" VerticalAlignment="Top" Click="uploadImage"/>
+
+        <!-- Algorithm Selection Radio Buttons -->
+        <RadioButton  x:Name="BM" Content="BM" HorizontalAlignment="Left" Margin="276,346,0,0" VerticalAlignment="Top" GroupName="Algorithm"/>
+        <RadioButton  x:Name="KMP" Content="KMP" HorizontalAlignment="Left" Margin="318,346,0,0" VerticalAlignment="Top" GroupName="Algorithm"/>
+
+        <!-- Search Button -->
+        <Button Content="Search" HorizontalAlignment="Left" Margin="463,344,0,0" VerticalAlignment="Top" Click="searchImage"/>
+
+        <!-- Execution Time and Match Percentage TextBlocks -->
+        <TextBlock x:Name="executionTimeText" HorizontalAlignment="Left" Margin="680,343,0,0" TextWrapping="Wrap" Text="Execution Time:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="matchPercentageText" HorizontalAlignment="Left" Margin="680,367,0,0" TextWrapping="Wrap" Text="Matches Percentage:" VerticalAlignment="Top"/>
     </Grid>
 </Window>
