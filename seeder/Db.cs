@@ -33,16 +33,30 @@ public class Db
     private static void WriteToEnvFile(string key, string value)
     {
         string envFilePath = ".env";
+        var lines = new List<string>();
 
-        if (!File.Exists(envFilePath))
+        if (File.Exists(envFilePath))
         {
-            File.Create(envFilePath).Dispose();
+            lines = File.ReadAllLines(envFilePath).ToList();
         }
 
-        using (StreamWriter sw = File.AppendText(envFilePath))
+        bool keyExists = false;
+        for (int i = 0; i < lines.Count; i++)
         {
-            sw.WriteLine($"{key}={value}");
+            if (lines[i].StartsWith($"{key}="))
+            {
+                lines[i] = $"{key}={value}";
+                keyExists = true;
+                break;
+            }
         }
+
+        if (!keyExists)
+        {
+            lines.Add($"{key}={value}");
+        }
+
+        File.WriteAllLines(envFilePath, lines);
     }
 
     // Static method to initialize connection

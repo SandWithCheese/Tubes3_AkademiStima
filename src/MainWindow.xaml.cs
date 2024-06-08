@@ -44,38 +44,46 @@ namespace src
             //     Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
             // }
 
-            string imagePath = "test/9__M_Left_little_finger.BMP";
-            // string imagePath2 = "test/95__M_Left_little_finger.BMP";
-            string imagePath2 = "test/9__M_Left_little_finger.BMP";
-            string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
-            string ascii2 = Converter.ConvertImgToAscii(imagePath2);
+            // foreach (var sidikJari in SidikJari)
+            // {
 
-            bool kmpRes = KnuthMorrisPratt.KMPSearch(ascii2, ascii);
-            bool bmRes = BoyerMoore.BMSearch(ascii2, ascii);
+            //     string imagePath = "test/557__M_Left_little_finger.BMP";
+            //     // string imagePath2 = "test/95__M_Left_little_finger.BMP";
+            //     // string imagePath2 = "test/9__M_Left_little_finger.BMP";
+            //     string imagePath2 = sidikJari.BerkasCitra!;
+            //     string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            //     string ascii2 = Converter.ConvertImgToAscii(imagePath2);
 
-            if (kmpRes)
-            {
-                Console.WriteLine("KMP: Matched");
-            }
-            else
-            {
-                Console.WriteLine("KMP: Not Matched");
-                string ascii3 = Converter.ConvertImgToAscii(imagePath);
-                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
-                Console.WriteLine($"Similarity: {similarity}%");
-            }
+            //     bool kmpRes = KnuthMorrisPratt.KMPSearch(ascii2, ascii);
+            //     bool bmRes = BoyerMoore.BMSearch(ascii2, ascii);
 
-            if (bmRes)
-            {
-                Console.WriteLine("BM: Matched");
-            }
-            else
-            {
-                Console.WriteLine("BM: Not Matched");
-                string ascii3 = Converter.ConvertImgToAscii(imagePath);
-                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
-                Console.WriteLine($"Similarity: {similarity}%");
-            }
+            //     if (kmpRes)
+            //     {
+            //         Console.WriteLine("KMP: Matched");
+            //         Console.WriteLine("Matched with: " + sidikJari.Nama);
+            //     }
+            //     // else
+            //     // {
+            //     //     Console.WriteLine("KMP: Not Matched");
+            //     //     string ascii3 = Converter.ConvertImgToAscii(imagePath);
+            //     //     double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
+            //     //     Console.WriteLine($"Similarity: {similarity}%");
+            //     // }
+
+            //     if (bmRes)
+            //     {
+            //         Console.WriteLine("BM: Matched");
+            //         Console.WriteLine("Matched with: " + sidikJari.Nama);
+            //     }
+            //     // else
+            //     // {
+            //     //     Console.WriteLine("BM: Not Matched");
+            //     //     string ascii3 = Converter.ConvertImgToAscii(imagePath);
+            //     //     double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
+            //     //     Console.WriteLine($"Similarity: {similarity}%");
+            //     // }
+            // }
+
         }
 
         private void uploadImage(object sender, RoutedEventArgs e)

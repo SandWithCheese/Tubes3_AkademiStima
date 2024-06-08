@@ -79,15 +79,23 @@ public class Converter
         int height = grayImg.Height;
 
         int startY = height - 20; // The 20th row from the bottom
-        int startX = (width / 2) - 16; // Starting X position (centered 32 pixels horizontally)
+        // int startX = (width / 2) - 16; // Starting X position (centered 32 pixels horizontally)
+        int startX = 0;
 
         StringBuilder binaryString = new();
 
-        for (int j = startX; j < startX + 32; j++)
+        // for (int j = startX; j < startX + 32; j++)
+        // {
+        //     Color pixelColor = grayImg.GetPixel(j, startY);
+        //     binaryString.Append(pixelColor.R > 128 ? '1' : '0');
+        // }
+
+        for (int j = startX; j < width; j++)
         {
             Color pixelColor = grayImg.GetPixel(j, startY);
             binaryString.Append(pixelColor.R > 128 ? '1' : '0');
         }
+
 
         return binaryString.ToString();
     }
