@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
+using src.Algorithm;
 
 
 namespace src
@@ -26,21 +27,54 @@ namespace src
             InitializeComponent();
             DataContext = this;
 
-            _biodataRepository = new BiodataRepository("Database\\database.db");
+            _biodataRepository = new BiodataRepository("Database/database.db");
             Biodata = new ObservableCollection<Biodata>(_biodataRepository.GetAll());
 
-            _sidikJariRepository = new SidikJariRepository("Database\\database.db");
+            _sidikJariRepository = new SidikJariRepository("Database/database.db");
             SidikJari = new ObservableCollection<SidikJari>(_sidikJariRepository.GetAll());
 
             DotNetEnv.Env.Load(".env");
             byte[] key = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
             byte[] iv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
 
-            foreach (var biodata in Biodata)
+            // foreach (var biodata in Biodata)
+            // {
+            //     Console.WriteLine(biodata.Nik);
+            //     Console.WriteLine(biodata.Nama);
+            //     Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
+            // }
+
+            string imagePath = "test/9__M_Left_little_finger.BMP";
+            // string imagePath2 = "test/95__M_Left_little_finger.BMP";
+            string imagePath2 = "test/9__M_Left_little_finger.BMP";
+            string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            string ascii2 = Converter.ConvertImgToAscii(imagePath2);
+
+            bool kmpRes = KnuthMorrisPratt.KMPSearch(ascii2, ascii);
+            bool bmRes = BoyerMoore.BMSearch(ascii2, ascii);
+
+            if (kmpRes)
             {
-                Console.WriteLine(biodata.Nik);
-                Console.WriteLine(biodata.Nama);
-                Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
+                Console.WriteLine("KMP: Matched");
+            }
+            else
+            {
+                Console.WriteLine("KMP: Not Matched");
+                string ascii3 = Converter.ConvertImgToAscii(imagePath);
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
+                Console.WriteLine($"Similarity: {similarity}%");
+            }
+
+            if (bmRes)
+            {
+                Console.WriteLine("BM: Matched");
+            }
+            else
+            {
+                Console.WriteLine("BM: Not Matched");
+                string ascii3 = Converter.ConvertImgToAscii(imagePath);
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
+                Console.WriteLine($"Similarity: {similarity}%");
             }
         }
 

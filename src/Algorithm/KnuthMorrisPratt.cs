@@ -1,6 +1,6 @@
-namespace src;
+namespace src.Algorithm;
 
-public class KMP
+public class KnuthMorrisPratt
 {
     private static int[] ComputeKMPTable(string pattern)
     {
