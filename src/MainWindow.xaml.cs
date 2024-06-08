@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using src.Algorithm;
+using src.Core;
+using System.IO;
 
 
 namespace src
@@ -19,8 +21,11 @@ namespace src
     {
         public ObservableCollection<Biodata> Biodata { get; set; }
         public ObservableCollection<SidikJari> SidikJari { get; set; }
+        public ObservableCollection<Biodata> Result { get; set; }
         private readonly BiodataRepository _biodataRepository;
         private readonly SidikJariRepository _sidikJariRepository;
+        private readonly byte[] _aesKey;
+        private readonly byte[] _aesIv;
 
         public MainWindow()
         {
@@ -33,57 +38,11 @@ namespace src
             _sidikJariRepository = new SidikJariRepository("Database/database.db");
             SidikJari = new ObservableCollection<SidikJari>(_sidikJariRepository.GetAll());
 
+            Result = [];
+
             DotNetEnv.Env.Load(".env");
-            byte[] key = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
-            byte[] iv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
-
-            // foreach (var biodata in Biodata)
-            // {
-            //     Console.WriteLine(biodata.Nik);
-            //     Console.WriteLine(biodata.Nama);
-            //     Console.WriteLine(Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), key, iv)));
-            // }
-
-            // foreach (var sidikJari in SidikJari)
-            // {
-
-            //     string imagePath = "test/557__M_Left_little_finger.BMP";
-            //     // string imagePath2 = "test/95__M_Left_little_finger.BMP";
-            //     // string imagePath2 = "test/9__M_Left_little_finger.BMP";
-            //     string imagePath2 = sidikJari.BerkasCitra!;
-            //     string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
-            //     string ascii2 = Converter.ConvertImgToAscii(imagePath2);
-
-            //     bool kmpRes = KnuthMorrisPratt.KMPSearch(ascii2, ascii);
-            //     bool bmRes = BoyerMoore.BMSearch(ascii2, ascii);
-
-            //     if (kmpRes)
-            //     {
-            //         Console.WriteLine("KMP: Matched");
-            //         Console.WriteLine("Matched with: " + sidikJari.Nama);
-            //     }
-            //     // else
-            //     // {
-            //     //     Console.WriteLine("KMP: Not Matched");
-            //     //     string ascii3 = Converter.ConvertImgToAscii(imagePath);
-            //     //     double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
-            //     //     Console.WriteLine($"Similarity: {similarity}%");
-            //     // }
-
-            //     if (bmRes)
-            //     {
-            //         Console.WriteLine("BM: Matched");
-            //         Console.WriteLine("Matched with: " + sidikJari.Nama);
-            //     }
-            //     // else
-            //     // {
-            //     //     Console.WriteLine("BM: Not Matched");
-            //     //     string ascii3 = Converter.ConvertImgToAscii(imagePath);
-            //     //     double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii3, ascii2);
-            //     //     Console.WriteLine($"Similarity: {similarity}%");
-            //     // }
-            // }
-
+            _aesKey = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_KEY"));
+            _aesIv = Convert.FromBase64String(DotNetEnv.Env.GetString("AES_IV"));
         }
 
         private void uploadImage(object sender, RoutedEventArgs e)
@@ -123,6 +82,83 @@ namespace src
             }
         }
 
+        private Tuple<SidikJari?, double> FindSidikJariKMP()
+        {
+            string imagePath = new Uri(sourceImage.Source.ToString()!).LocalPath;
+            string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            SidikJari? mostSimilarSidikJari = null;
+            double highestSimilarity = 0;
+
+            foreach (var sidikJari in SidikJari)
+            {
+                string imagePath2 = sidikJari.BerkasCitra!;
+                string ascii2 = Converter.ConvertImgToAscii(imagePath2);
+
+                bool kmpRes = KnuthMorrisPratt.KMPSearch(ascii2, ascii);
+
+                if (kmpRes)
+                {
+                    return new Tuple<SidikJari?, double>(sidikJari, 1);
+                }
+
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii, ascii2);
+                if (similarity > highestSimilarity)
+                {
+                    mostSimilarSidikJari = sidikJari;
+                    highestSimilarity = similarity;
+                }
+            }
+
+            return new Tuple<SidikJari?, double>(mostSimilarSidikJari, highestSimilarity);
+        }
+
+        private Tuple<SidikJari?, double> FindSidikJariBM()
+        {
+            string imagePath = new Uri(sourceImage.Source.ToString()!).LocalPath;
+            string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            SidikJari? mostSimilarSidikJari = null;
+            double highestSimilarity = 0;
+
+            foreach (var sidikJari in SidikJari)
+            {
+                string imagePath2 = sidikJari.BerkasCitra!;
+                string ascii2 = Converter.ConvertImgToAscii(imagePath2);
+
+                bool bmRes = BoyerMoore.BMSearch(ascii2, ascii);
+
+                if (bmRes)
+                {
+                    return new Tuple<SidikJari?, double>(sidikJari, 1);
+                }
+
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii, ascii2);
+                if (similarity > highestSimilarity)
+                {
+                    mostSimilarSidikJari = sidikJari;
+                    highestSimilarity = similarity;
+                }
+            }
+
+            return new Tuple<SidikJari?, double>(mostSimilarSidikJari, highestSimilarity);
+        }
+
+        private Biodata? FindBiodataFromSidikJari(SidikJari sidikJari)
+        {
+            string nama = sidikJari.Nama!;
+
+            foreach (var biodata in Biodata)
+            {
+                string correctedNama = RegexGaming.FixAlayWord(nama, biodata.Nama!);
+
+                if (correctedNama == nama)
+                {
+                    return biodata;
+                }
+            }
+
+            return null;
+        }
+
         private void searchImage(object sender, RoutedEventArgs e)
         {
             if (sourceImage.Source == null)
@@ -131,56 +167,112 @@ namespace src
                 return;
             }
 
-            Biodata.Clear();
+            Result.Clear();
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            string selectedAlgorithm = "";
+            double similarity = 0;
 
             // If BM is checked
             if (BM.IsChecked == true)
             {
-                Biodata.Add(new Biodata
+                Tuple<SidikJari?, double> result = FindSidikJariBM();
+                SidikJari? sidikJari = result.Item1;
+                similarity = result.Item2;
+
+                if (sidikJari == null)
                 {
-                    Nik = "1234567890123456",
-                    Nama = "BM",
-                    TempatLahir = "Jakarta",
-                    TanggalLahir = DateOnly.FromDateTime(DateTime.Now),
-                    JenisKelamin = "Male",
-                    GolonganDarah = "O",
-                    Alamat = "Jl. Dummy Address",
-                    Agama = "Islam",
-                    StatusPerkawinan = "Married",
-                    Pekerjaan = "Software Engineer",
-                    Kewarganegaraan = "Indonesian"
-                });
+                    MessageBox.Show("No sidik jari found.");
+                    return;
+                }
+
+                Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
+
+                if (biodata == null)
+                {
+                    MessageBox.Show("No biodata found.");
+                    return;
+                }
+
+                Biodata fixedBiodata = new()
+                {
+                    Nik = biodata.Nik,
+                    Nama = sidikJari.Nama!,
+                    TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
+                    TanggalLahir = biodata.TanggalLahir,
+                    JenisKelamin = biodata.JenisKelamin,
+                    GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
+                    Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
+                    Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
+                    StatusPerkawinan = biodata.StatusPerkawinan,
+                    Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
+                    Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
+                };
+
+                Result.Add(fixedBiodata);
+
+                string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
+
+                Uri imageUri;
+                if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
+                {
+                    resultImage.Source = new BitmapImage(imageUri);
+                }
             }
 
             // If KMP is checked
             if (KMP.IsChecked == true)
             {
-                Biodata.Add(new Biodata
+                Tuple<SidikJari?, double> result = FindSidikJariKMP();
+                SidikJari? sidikJari = result.Item1;
+                similarity = result.Item2;
+
+                if (sidikJari == null)
                 {
-                    Nik = "1234567890123456",
-                    Nama = "KMP",
-                    TempatLahir = "Jakarta",
-                    TanggalLahir = DateOnly.FromDateTime(DateTime.Now),
-                    JenisKelamin = "Male",
-                    GolonganDarah = "O",
-                    Alamat = "Jl. Dummy Address",
-                    Agama = "Islam",
-                    StatusPerkawinan = "Married",
-                    Pekerjaan = "Software Engineer",
-                    Kewarganegaraan = "Indonesian"
-                });
+                    MessageBox.Show("No match found.");
+                    return;
+                }
+
+                Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
+
+                if (biodata == null)
+                {
+                    MessageBox.Show("No match found.");
+                    return;
+                }
+
+                Biodata fixedBiodata = new()
+                {
+                    Nik = biodata.Nik,
+                    Nama = sidikJari.Nama!,
+                    TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
+                    TanggalLahir = biodata.TanggalLahir,
+                    JenisKelamin = biodata.JenisKelamin,
+                    GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
+                    Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
+                    Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
+                    StatusPerkawinan = biodata.StatusPerkawinan,
+                    Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
+                    Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
+                };
+
+                Result.Add(fixedBiodata);
+
+                string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
+
+                Uri imageUri;
+                if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
+                {
+                    resultImage.Source = new BitmapImage(imageUri);
+                }
             }
 
             stopwatch.Stop();
 
             // Display execution time and match percentage
             executionTimeText.Text = $"Execution Time: {stopwatch.ElapsedMilliseconds} ms";
-            matchPercentageText.Text = "Matches Percentage: 100%";  // Example match percentage
+            matchPercentageText.Text = $"Matches Percentage: {similarity * 100}%";
         }
     }
 }

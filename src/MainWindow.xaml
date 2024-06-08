@@ -13,7 +13,7 @@
         <Image x:Name="sourceImage" HorizontalAlignment="Left" Margin="28,68,0,166" Width="250" Height="250"/>
         <Image x:Name="resultImage" HorizontalAlignment="Left" Margin="358,68,0,166" Width="250" Height="250"/>
 
-        <ListBox ItemsSource="{Binding Biodata}" Margin="672,67,16,0" Height="250" VerticalAlignment="Top">
+        <ListBox ItemsSource="{Binding Result}" Margin="672,67,16,0" Height="250" VerticalAlignment="Top">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

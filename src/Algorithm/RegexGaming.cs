@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,12 +14,12 @@ public class RegexGaming
         { 'E', "[Ee3]" }, { 'e', "[Ee3]" },
         { 'A', "[Aa4]" }, { 'a', "[Aa4]" },
         { 's', "[sS5]" }, { 'S', "[sS5]" },
-        { 'G', "[Gg6]" }, { 'g', "[Gg6]" },
+        { 'G', "[Gg6]" }, { 'g', "[Gg9]" },
         { 'T', "[Tt7]" }, { 't', "[Tt7]" },
         { 'B', "[Bb8]" }, { 'b', "[Bb8]" },
     };
 
-    private static readonly HashSet<char> Vowels = new() { 'a', 'i', 'u', 'e', 'o', 'A', 'I', 'U', 'E', 'O' };
+    private static readonly HashSet<char> Vowels = ['a', 'i', 'u', 'e', 'o', 'A', 'I', 'U', 'E', 'O'];
 
     public static string GenerateRegexPattern(string original)
     {
@@ -57,7 +54,7 @@ public class RegexGaming
         // Replace each alay word with the original word
         string[] alayWords = alayText.Split(' ');
         // Create a list to store the corrected words
-        List<string> correctedWords = new List<string>();
+        List<string> correctedWords = [];
 
         foreach (var alayWord in alayWords)
         {
@@ -69,7 +66,7 @@ public class RegexGaming
                 string originalWord = pair.Value;
 
                 // Compile the regex pattern, pakai IgnoreCase biar gak peduli huruf besar kecil
-                Regex alayRegex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+                Regex alayRegex = new(regexPattern, RegexOptions.IgnoreCase);
 
                 // Check if the alay word matches the regex pattern
                 if (alayRegex.IsMatch(alayWord))
@@ -96,7 +93,7 @@ public class RegexGaming
 
     private static string GenerateAngkaandBesarKecilPattern(string original)
     {
-        return string.Concat(original.Select(c => AngkaKapitalMapping.ContainsKey(c) ? AngkaKapitalMapping[c] : Regex.Escape(c.ToString())));
+        return string.Concat(original.Select(c => AngkaKapitalMapping.TryGetValue(c, out string? value) ? value : Regex.Escape(c.ToString())));
     }
 
     private static string GenerateSingkatPattern(string original)
@@ -121,16 +118,4 @@ public class RegexGaming
         var angkaPattern = GenerateAngkaandBesarKecilPattern(original);
         return GenerateSingkatPattern(angkaPattern);
     }
-
-    // public static void Main(string[] args)
-    // {
-    //     string originalText = "Saya Suka Nasi Padang";
-    //     string alayText = "S4y4 sUkA Ns1 P4d4n6";
-
-    //     string correctedText = FixAlayWord(originalText, alayText);
-
-    //     Console.WriteLine($"Teks asli: {originalText}");
-    //     Console.WriteLine($"Teks alay: {alayText}");
-    //     Console.WriteLine($"Teks yang dikoreksi: {correctedText}");
-    // }
 }
