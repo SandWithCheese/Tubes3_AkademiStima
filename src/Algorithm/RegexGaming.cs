@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -14,22 +17,39 @@ public class RegexGaming
         { 'E', "[Ee3]" }, { 'e', "[Ee3]" },
         { 'A', "[Aa4]" }, { 'a', "[Aa4]" },
         { 's', "[sS5]" }, { 'S', "[sS5]" },
-        { 'G', "[Gg6]" }, { 'g', "[Gg9]" },
+        { 'G', "[Gg6]" }, { 'g', "[Gg6]" },
         { 'T', "[Tt7]" }, { 't', "[Tt7]" },
         { 'B', "[Bb8]" }, { 'b', "[Bb8]" },
+        { 'q', "[qQ]" }, { 'Q', "[qQ]" },
+        { 'l', "[lL]" }, { 'L', "[lL]" },
+        { 'j', "[jJ]" }, { 'J', "[jJ]" },
+        { 'k', "[kK]" }, { 'K', "[kK]" },
+        { 'm', "[mM]" }, { 'M', "[mM]" },
+        { 'n', "[nN]" }, { 'N', "[nN]" },
+        { 'p', "[pP]" }, { 'P', "[pP]" },
+        { 'r', "[rR]" }, { 'R', "[rR]" },
+        { 'v', "[vV]" }, { 'V', "[vV]" },
+        { 'w', "[wW]" }, { 'W', "[wW]" },
+        { 'x', "[xX]" }, { 'X', "[xX]" },
+        { 'y', "[yY]" }, { 'Y', "[yY]" },
+        { 'd', "[dD]" }, { 'D', "[dD]" },
+        { 'f', "[fF]" }, { 'F', "[fF]" },
+        { 'h', "[hH]" }, { 'H', "[hH]" },
+        { 'c', "[cC]" }, { 'C', "[cC]" },
+        { 'u', "[uU]" }, { 'U', "[uU]" },
     };
 
-    private static readonly HashSet<char> Vowels = ['a', 'i', 'u', 'e', 'o', 'A', 'I', 'U', 'E', 'O'];
+    private static readonly HashSet<char> Vowels = new() { 'a', 'i', 'u', 'e', 'o', 'A', 'I', 'U', 'E', 'O' };
 
     public static string GenerateRegexPattern(string original)
     {
-        var methods = new[] { "orisinil", "angka-besar-kecil", "singkat", "kombinasi" };
+        var methods = new[] { "orisinil", "angka-besar-kecil", "singkat"};
         var regexPatterns = methods.Select(method => method switch
         {
             "orisinil" => GenerateOrisinilPattern(original),
             "angka-besar-kecil" => GenerateAngkaandBesarKecilPattern(original),
             "singkat" => GenerateSingkatPattern(original),
-            "kombinasi" => GenerateKombinasiPattern(original),
+            // "kombinasi" => GenerateKombinasiPattern(original),
             _ => original
         }).ToList();
 
@@ -48,13 +68,14 @@ public class RegexGaming
         {
             // Generate regex pattern for each word (tiap kata ada regexnya masing-masing)
             string regexPattern = GenerateRegexPattern(word);
+            // Console.WriteLine($"Kata: {word}, Regex: {regexPattern}");
             regexToOriginalWord[regexPattern] = word;
         }
 
         // Replace each alay word with the original word
         string[] alayWords = alayText.Split(' ');
         // Create a list to store the corrected words
-        List<string> correctedWords = [];
+        List<string> correctedWords = new List<string>();
 
         foreach (var alayWord in alayWords)
         {
@@ -66,7 +87,7 @@ public class RegexGaming
                 string originalWord = pair.Value;
 
                 // Compile the regex pattern, pakai IgnoreCase biar gak peduli huruf besar kecil
-                Regex alayRegex = new(regexPattern, RegexOptions.IgnoreCase);
+                Regex alayRegex = new Regex(regexPattern, RegexOptions.IgnoreCase);
 
                 // Check if the alay word matches the regex pattern
                 if (alayRegex.IsMatch(alayWord))
@@ -93,29 +114,78 @@ public class RegexGaming
 
     private static string GenerateAngkaandBesarKecilPattern(string original)
     {
-        return string.Concat(original.Select(c => AngkaKapitalMapping.TryGetValue(c, out string? value) ? value : Regex.Escape(c.ToString())));
+        return string.Concat(original.Select(c => AngkaKapitalMapping.ContainsKey(c) ? AngkaKapitalMapping[c] : Regex.Escape(c.ToString())));
     }
 
     private static string GenerateSingkatPattern(string original)
     {
         var words = original.Split(' ');
         var result = new StringBuilder();
+
         foreach (var word in words)
         {
             if (word.Length > 0)
             {
-                result.Append(Regex.Escape(word[0].ToString()));
-                result.Append(string.Concat(word.Skip(1).Where(c => !Vowels.Contains(c)).Select(c => Regex.Escape(c.ToString()))));
+                // Tambahkan huruf pertama dan cek di AngkaKapitalMapping
+                if (AngkaKapitalMapping.ContainsKey(word[0]))
+                {
+                    result.Append(AngkaKapitalMapping[word[0]]);
+                }
+                else
+                {
+                    result.Append($"[{char.ToLower(word[0])}{char.ToUpper(word[0])}]");
+                }
+
+                // Tambahkan sisa huruf dengan cek di AngkaKapitalMapping dan mengabaikan vokal
+                foreach (var c in word.Skip(1))
+                {
+                    if (Vowels.Contains(c))
+                    {
+                        // Jika karakter adalah vokal, jadikan opsional
+                        if (AngkaKapitalMapping.ContainsKey(c))
+                        {
+                            result.Append($"({AngkaKapitalMapping[c]})?");
+                        }
+                        else
+                        {
+                            result.Append($"[{char.ToLower(c)}{char.ToUpper(c)}]?");
+                        }
+                    }
+                    else
+                    {
+                        if (AngkaKapitalMapping.ContainsKey(c))
+                        {
+                            result.Append(AngkaKapitalMapping[c]);
+                        }
+                        else
+                        {
+                            result.Append($"[{char.ToLower(c)}{char.ToUpper(c)}]");
+                        }
+                    }
+                }
             }
+            // Tambahkan regex untuk mengabaikan nol atau lebih spasi
             result.Append(@"\s*");
         }
 
         return result.ToString().Trim();
     }
 
-    private static string GenerateKombinasiPattern(string original)
-    {
-        var angkaPattern = GenerateAngkaandBesarKecilPattern(original);
-        return GenerateSingkatPattern(angkaPattern);
-    }
+
+    // private static string GenerateKombinasiPattern(string original)
+    // {
+    //     var angkaPattern = GenerateAngkaandBesarKecilPattern(original);
+    //     return GenerateSingkatPattern(angkaPattern);
+    // }
+
+    // public static void Main(string[] args)
+    // {
+    //     string originalText = "Saya Suka Nasi Padang Terril Murazik";
+    //     string alayText = "54y4 sUkA Ns1 P4d4n6 7Rr1lL mr21K";
+    //     string correctedText = FixAlayWord(originalText, alayText);
+
+    //     Console.WriteLine($"Teks asli: {originalText}");
+    //     Console.WriteLine($"Teks alay: {alayText}");
+    //     Console.WriteLine($"Teks yang dikoreksi: {correctedText}");
+    // }
 }
