@@ -27,7 +27,7 @@ public class Db
         WriteToEnvFile("AES_IV", Convert.ToBase64String(iv));
 
         // Seed data
-        Seed();
+        // Seed();
     }
 
     private static void WriteToEnvFile(string key, string value)

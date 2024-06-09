@@ -8,6 +8,8 @@ Ini deskripsi tugas
 
 1. Inisialisasi database
 
+    Sebelum menjalankan command, hapus isi file sqlite_dump.sql dan hapus file database.db terlebih dahulu.
+
     ```bash
     cd seeder
     dotnet restore
