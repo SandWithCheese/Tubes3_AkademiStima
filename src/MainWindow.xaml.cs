@@ -271,7 +271,7 @@ namespace src
             stopwatch.Stop();
 
             executionTimeText.Text = $"Execution Time: {stopwatch.ElapsedMilliseconds} ms";
-            matchPercentageText.Text = foundMatch ? $"Matches Percentage: {similarity * 100}%" : "Matches Percentage: -";
+            matchPercentageText.Text = foundMatch ? $"Matches Percentage: {similarity * 100:F3}%" : "Matches Percentage: -";
 
             if (!foundMatch)
             {
