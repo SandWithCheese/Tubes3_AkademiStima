@@ -5,15 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:src"
         mc:Ignorable="d"
-        Title="Akademi Stima" Height="450" Width="900">
+        Title="Akademi Stima" Height="450" Width="750" Background="#05141f" FontSize="13" FontWeight="Bold">
+
     <Grid>
-        <TextBlock FontSize="20" HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" Text="High-Precision Fingerprint Recognition System" VerticalAlignment="Top"/>
 
         <!-- Suspect Images -->
-        <Image x:Name="sourceImage" HorizontalAlignment="Left" Margin="28,68,0,166" Width="250" Height="250"/>
-        <Image x:Name="resultImage" HorizontalAlignment="Left" Margin="358,68,0,166" Width="250" Height="250"/>
+        <Border BorderBrush="#29abe2" BorderThickness="3" CornerRadius="1" Margin="39,87,512,127">
+            <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="SUSPECT" VerticalAlignment="Top" Foreground="White" Margin="0,17,0,0"/>
+        </Border>
 
-        <ListBox ItemsSource="{Binding Result}" Margin="672,67,16,0" Height="250" VerticalAlignment="Top">
+        <Border BorderBrush="#29abe2" BorderThickness="3" CornerRadius="1" Margin="62,137,534,147">
+            <Image x:Name="sourceImage" Stretch="Uniform"/>
+        </Border>
+
+        <Border BorderBrush="#29abe2" BorderThickness="3" CornerRadius="1" Margin="262,87,290,127">
+            <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="PERPETRATOR" VerticalAlignment="Top" Foreground="White" Margin="0,17,0,0"/>
+        </Border>
+        <Border BorderBrush="#29abe2" BorderThickness="3" CornerRadius="1" Margin="284,137,314,147">
+            <Image x:Name="resultImage" Stretch="Uniform"/>
+        </Border>
+
+        <ListBox ItemsSource="{Binding Result}" Margin="502,87,10,0" Height="250" VerticalAlignment="Top" Background="#05141f" Foreground="#00b3ea" BorderBrush="#29abe2" BorderThickness="3">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -40,17 +52,21 @@
         </ListBox>
 
         <!-- Upload Image Button -->
-        <Button Content="Upload Image" HorizontalAlignment="Left" Margin="140,344,0,0" VerticalAlignment="Top" Click="uploadImage"/>
+        <Border BorderBrush="#29abe2" BorderThickness="2" CornerRadius="1" Margin="57,333,569,31">
+            <Button Content="Choose Image" HorizontalAlignment="Center" VerticalAlignment="Center" Click="uploadImage" Background="#29abe2" Foreground="White" Padding="7" BorderThickness="0"/>
+        </Border>
 
         <!-- Algorithm Selection Radio Buttons -->
-        <RadioButton  x:Name="BM" Content="BM" HorizontalAlignment="Left" Margin="276,346,0,0" VerticalAlignment="Top" GroupName="Algorithm"/>
-        <RadioButton  x:Name="KMP" Content="KMP" HorizontalAlignment="Left" Margin="318,346,0,0" VerticalAlignment="Top" GroupName="Algorithm"/>
-
+        <RadioButton x:Name="BM" Content="BM" HorizontalAlignment="Left" Margin="232,353,0,0" VerticalAlignment="Top" GroupName="Algorithm" Foreground="#00b3ea"/>
+        <RadioButton x:Name="KMP" Content="KMP" HorizontalAlignment="Left" Margin="274,353,0,0" VerticalAlignment="Top" GroupName="Algorithm"  Foreground="#00b3ea"/>
         <!-- Search Button -->
-        <Button Content="Search" HorizontalAlignment="Left" Margin="463,344,0,0" VerticalAlignment="Top" Click="searchImage"/>
-
+        <Border BorderBrush="#077317" BorderThickness="2" CornerRadius="1" Margin="374,334,291,30">
+            <Button Content="Search" HorizontalAlignment="Center" VerticalAlignment="Center" Click="searchImage" Background="#077317" Foreground="White" Padding="7"/>
+        </Border>
         <!-- Execution Time and Match Percentage TextBlocks -->
-        <TextBlock x:Name="executionTimeText" HorizontalAlignment="Left" Margin="680,343,0,0" TextWrapping="Wrap" Text="Execution Time:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="matchPercentageText" HorizontalAlignment="Left" Margin="680,367,0,0" TextWrapping="Wrap" Text="Matches Percentage:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="executionTimeText" HorizontalAlignment="Left" Margin="504,357,0,0" TextWrapping="Wrap" Text="Execution Time:" VerticalAlignment="Top" Foreground="#00b3ea"/>
+        <TextBlock x:Name="matchPercentageText" HorizontalAlignment="Left" Margin="504,381,0,0" TextWrapping="Wrap" Text="Matches Percentage:" VerticalAlignment="Top" Foreground="#00b3ea"/>
+
+        <Image Source="X:\IF_ITB\IF2211-Strategi_Algoritma\Tubes3_AkademiStima\src\logo.png" HorizontalAlignment="Left" Height="39" Margin="39,19,0,0" VerticalAlignment="Top" Width="179"/>
     </Grid>
 </Window>

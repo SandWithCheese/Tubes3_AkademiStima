@@ -39,3 +39,7 @@ Ini deskripsi tugas
 | Ahmad Naufal Ramadan       | 13522005 |
 | Muhammad Althariq Fairuz   | 13522027 |
 | Muhammad Dava Fathurrahman | 13522114 |
+
+## Acknowledgments
+
+The design of this project was inspired by [THE CeCE IDEA TEAM](https://cece.uco.edu/idea/ProductCatalog/project.php?hash=3ef815416f775098fe977004015c6193).

@@ -1,15 +1,13 @@
 ﻿using Microsoft.Win32;
+using src.Algorithm;
 using src.Encryption;
 using src.MVVM.Model;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
-using System.Windows.Media.Imaging;
 using System.Windows.Controls;
-using src.Algorithm;
-using src.Core;
-using System.IO;
+using System.Windows.Media.Imaging;
 
 
 namespace src
@@ -78,7 +76,6 @@ namespace src
             if (selectedRadioButton != null)
             {
                 string selectedAlgorithm = selectedRadioButton.Content.ToString();
-                // You can use 'selectedAlgorithm' here as needed
             }
         }
 
@@ -184,6 +181,7 @@ namespace src
                 if (sidikJari == null)
                 {
                     MessageBox.Show("No sidik jari found.");
+                    resultImage.Source = null;
                     return;
                 }
 
@@ -192,6 +190,7 @@ namespace src
                 if (biodata == null)
                 {
                     MessageBox.Show("No biodata found.");
+                    resultImage.Source = null;
                     return;
                 }
 
@@ -231,6 +230,7 @@ namespace src
                 if (sidikJari == null)
                 {
                     MessageBox.Show("No match found.");
+                    resultImage.Source = null;
                     return;
                 }
 
@@ -239,6 +239,7 @@ namespace src
                 if (biodata == null)
                 {
                     MessageBox.Show("No match found.");
+                    resultImage.Source = null;
                     return;
                 }
 
