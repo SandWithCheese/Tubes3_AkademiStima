@@ -84,6 +84,7 @@ namespace src
         {
             string imagePath = new Uri(sourceImage.Source.ToString()!).LocalPath;
             string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            string ascii1 = Converter.ConvertImgToAscii(imagePath);
             SidikJari? mostSimilarSidikJari = null;
             double highestSimilarity = 0;
 
@@ -99,7 +100,7 @@ namespace src
                     return new Tuple<SidikJari?, double>(sidikJari, 1);
                 }
 
-                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii, ascii2);
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii1, ascii2);
                 if (similarity > highestSimilarity)
                 {
                     mostSimilarSidikJari = sidikJari;
@@ -114,6 +115,7 @@ namespace src
         {
             string imagePath = new Uri(sourceImage.Source.ToString()!).LocalPath;
             string ascii = Converter.ConvertImgToAsciiFromBottomCenter(imagePath);
+            string ascii1 = Converter.ConvertImgToAscii(imagePath);
             SidikJari? mostSimilarSidikJari = null;
             double highestSimilarity = 0;
 
@@ -129,7 +131,7 @@ namespace src
                     return new Tuple<SidikJari?, double>(sidikJari, 1);
                 }
 
-                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii, ascii2);
+                double similarity = LongestCommonSubsequence.CalculateSimilarity(ascii1, ascii2);
                 if (similarity > highestSimilarity)
                 {
                     mostSimilarSidikJari = sidikJari;
@@ -147,9 +149,6 @@ namespace src
             foreach (var biodata in Biodata)
             {
                 string correctedNama = RegexGaming.FixAlayWord(nama, biodata.Nama!);
-
-                Console.WriteLine(nama);
-                Console.WriteLine(correctedNama);
 
                 if (correctedNama == nama)
                 {
@@ -190,7 +189,7 @@ namespace src
                 SidikJari? sidikJari = result.Item1;
                 similarity = result.Item2;
 
-                if (sidikJari != null)
+                if (sidikJari != null && similarity > 0.5)
                 {
                     Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
 
@@ -233,7 +232,7 @@ namespace src
                 SidikJari? sidikJari = result.Item1;
                 similarity = result.Item2;
 
-                if (sidikJari != null)
+                if (sidikJari != null && similarity > 0.5)
                 {
                     Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
 
