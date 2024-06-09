@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 
 namespace src
@@ -164,12 +165,20 @@ namespace src
                 return;
             }
 
+            if (BM.IsChecked == false && KMP.IsChecked == false)
+            {
+                MessageBox.Show("Please select a search method (BM or KMP).");
+                return;
+            }
+
+            resultImage.Source = null;
             Result.Clear();
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             double similarity = 0;
+            bool foundMatch = false;
 
             // If BM is checked
             if (BM.IsChecked == true)
@@ -178,45 +187,39 @@ namespace src
                 SidikJari? sidikJari = result.Item1;
                 similarity = result.Item2;
 
-                if (sidikJari == null)
+                if (sidikJari != null)
                 {
-                    MessageBox.Show("No sidik jari found.");
-                    resultImage.Source = null;
-                    return;
-                }
+                    Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
 
-                Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
+                    if (biodata != null)
+                    {
+                        Biodata fixedBiodata = new()
+                        {
+                            Nik = biodata.Nik,
+                            Nama = sidikJari.Nama!,
+                            TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
+                            TanggalLahir = biodata.TanggalLahir,
+                            JenisKelamin = biodata.JenisKelamin,
+                            GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
+                            Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
+                            Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
+                            StatusPerkawinan = biodata.StatusPerkawinan,
+                            Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
+                            Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
+                        };
 
-                if (biodata == null)
-                {
-                    MessageBox.Show("No biodata found.");
-                    resultImage.Source = null;
-                    return;
-                }
+                        Result.Add(fixedBiodata);
 
-                Biodata fixedBiodata = new()
-                {
-                    Nik = biodata.Nik,
-                    Nama = sidikJari.Nama!,
-                    TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
-                    TanggalLahir = biodata.TanggalLahir,
-                    JenisKelamin = biodata.JenisKelamin,
-                    GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
-                    Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
-                    Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
-                    StatusPerkawinan = biodata.StatusPerkawinan,
-                    Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
-                    Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
-                };
+                        string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
 
-                Result.Add(fixedBiodata);
+                        Uri imageUri;
+                        if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
+                        {
+                            resultImage.Source = new BitmapImage(imageUri);
+                        }
 
-                string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
-
-                Uri imageUri;
-                if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
-                {
-                    resultImage.Source = new BitmapImage(imageUri);
+                        foundMatch = true;
+                    }
                 }
             }
 
@@ -227,53 +230,51 @@ namespace src
                 SidikJari? sidikJari = result.Item1;
                 similarity = result.Item2;
 
-                if (sidikJari == null)
+                if (sidikJari != null)
                 {
-                    MessageBox.Show("No match found.");
-                    resultImage.Source = null;
-                    return;
-                }
+                    Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
 
-                Biodata? biodata = FindBiodataFromSidikJari(sidikJari);
+                    if (biodata != null)
+                    {
+                        Biodata fixedBiodata = new()
+                        {
+                            Nik = biodata.Nik,
+                            Nama = sidikJari.Nama!,
+                            TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
+                            TanggalLahir = biodata.TanggalLahir,
+                            JenisKelamin = biodata.JenisKelamin,
+                            GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
+                            Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
+                            Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
+                            StatusPerkawinan = biodata.StatusPerkawinan,
+                            Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
+                            Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
+                        };
 
-                if (biodata == null)
-                {
-                    MessageBox.Show("No match found.");
-                    resultImage.Source = null;
-                    return;
-                }
+                        Result.Add(fixedBiodata);
 
-                Biodata fixedBiodata = new()
-                {
-                    Nik = biodata.Nik,
-                    Nama = sidikJari.Nama!,
-                    TempatLahir = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.TempatLahir!), _aesKey, _aesIv)),
-                    TanggalLahir = biodata.TanggalLahir,
-                    JenisKelamin = biodata.JenisKelamin,
-                    GolonganDarah = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.GolonganDarah!), _aesKey, _aesIv)),
-                    Alamat = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Alamat!), _aesKey, _aesIv)),
-                    Agama = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Agama!), _aesKey, _aesIv)),
-                    StatusPerkawinan = biodata.StatusPerkawinan,
-                    Pekerjaan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Pekerjaan!), _aesKey, _aesIv)),
-                    Kewarganegaraan = Encoding.UTF8.GetString(AES.Decrypt(Convert.FromBase64String(biodata.Kewarganegaraan!), _aesKey, _aesIv)),
-                };
+                        string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
 
-                Result.Add(fixedBiodata);
+                        Uri imageUri;
+                        if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
+                        {
+                            resultImage.Source = new BitmapImage(imageUri);
+                        }
 
-                string imagePath = Path.GetFullPath(sidikJari.BerkasCitra!);
-
-                Uri imageUri;
-                if (Uri.TryCreate(imagePath, UriKind.Absolute, out imageUri!))
-                {
-                    resultImage.Source = new BitmapImage(imageUri);
+                        foundMatch = true;
+                    }
                 }
             }
 
             stopwatch.Stop();
 
-            // Display execution time and match percentage
             executionTimeText.Text = $"Execution Time: {stopwatch.ElapsedMilliseconds} ms";
-            matchPercentageText.Text = $"Matches Percentage: {similarity * 100}%";
+            matchPercentageText.Text = foundMatch ? $"Matches Percentage: {similarity * 100}%" : "Matches Percentage: -";
+
+            if (!foundMatch)
+            {
+                MessageBox.Show("No match found.");
+            }
         }
     }
 }
