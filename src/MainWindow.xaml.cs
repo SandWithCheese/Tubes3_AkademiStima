@@ -148,6 +148,9 @@ namespace src
             {
                 string correctedNama = RegexGaming.FixAlayWord(nama, biodata.Nama!);
 
+                Console.WriteLine(nama);
+                Console.WriteLine(correctedNama);
+
                 if (correctedNama == nama)
                 {
                     return biodata;

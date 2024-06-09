@@ -34,7 +34,7 @@ namespace src.Algorithm
             int[,] lcs = CalculateLCS(text1, text2);
             int lcsLength = lcs[text1.Length, text2.Length];
 
-            return (double)lcsLength / Math.Max(text1.Length, text2.Length) * 100;
+            return (double)lcsLength / Math.Max(text1.Length, text2.Length);
         }
     }
 }

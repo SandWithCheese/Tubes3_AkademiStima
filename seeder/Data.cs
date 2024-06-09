@@ -74,20 +74,6 @@ public class Data
         foreach (var tuple in sidikJari)
         {
             var name = tuple.Item2;
-            if (!data.Values.All(v => v != null))
-            {
-                data["nik"] = fake.Random.Number(100000000, 999999999).ToString();
-                data["nama"] = name;
-                data["tempat_lahir"] = fake.Address.City();
-                data["tanggal_lahir"] = fake.Date.Past(30, DateTime.Now.AddYears(-18)).ToString("yyyy-MM-dd");
-                data["jenis_kelamin"] = fake.PickRandom(genders);
-                data["golongan_darah"] = fake.PickRandom(bloodTypes);
-                data["alamat"] = fake.Address.FullAddress();
-                data["agama"] = fake.PickRandom(religions);
-                data["status_perkawinan"] = fake.PickRandom(status);
-                data["pekerjaan"] = fake.Name.JobTitle();
-                data["kewarganegaraan"] = fake.PickRandom(citizenship);
-            }
 
             if (data["nama"] != name)
             {
@@ -156,13 +142,12 @@ public class Data
             { 'o', '0' }, { 'O', '0' },
             { 'i', '1' }, { 'I', '1' },
             { 'z', '2' }, { 'Z', '2' },
-            { 'E', '3' },
-            { 'A', '4' },
+            { 'E', '3' }, { 'e', '3' },
+            { 'A', '4' }, { 'a', '4' },
             { 's', '5' }, { 'S', '5' },
-            { 'G', '6' },
-            { 'T', '7' },
-            { 'B', '8' },
-            { 'g', '9' }
+            { 'G', '6' }, { 'g', '6' },
+            { 'T', '7' }, { 't', '7' },
+            { 'B', '8' }, { 'b', '8' }
         };
 
         var temp = new string(name.Select(c => mapping.TryGetValue(c, out char value) ? value : c).ToArray());
